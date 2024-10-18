@@ -1,0 +1,10 @@
+[user]
+pinned=firefox;thunar;xfce4-terminal;Alacritty;
+indicatorStyle=2
+inactiveIndicatorStyle=2
+indicatorOrientation=1
+indicatorColor=rgb(255,163,72)
+inactiveColor=rgb(76,166,230)
+indicatorColorFromTheme=false
+forceIconSize=true
+iconSize=32
