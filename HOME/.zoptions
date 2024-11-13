@@ -1,0 +1,11 @@
+#automatically change dir when dir is typed
+# disabled since it may inhibit automatic hashing functionality thinking a cd is requested instead. 
+# Refer to Stephenson, pg 52.
+# setopt AUTO_CD 
+setopt HIST_VERIFY #don't automatically run history command recalled with a !
+setopt EXTENDED_GLOB
+setopt NO_NOTIFY #completion of background job not notified
+setopt PROMPT_SUBST #being able to perform parameter substitution in prompt
+setopt SHARE_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_DUPS

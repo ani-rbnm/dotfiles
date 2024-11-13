@@ -1,4 +1,6 @@
 # dotfiles
+
+## Desktop Setup
 0. Base directory: dotfiles/
 1. Windows manager tweaks - Check the 1-4, 7 checkboxes
 2. copy themes
@@ -27,3 +29,9 @@
 14. Window Manager - Title font -> IBM Plex Sans Bold
 15. Alacrity config
 
+## Setup grub to hide boot menu
+1. /etc/default/grub
+    GRUB_TIMEOUT=5
+    GRUB_TIMEOUT_STYLE=hidden
+2. update grub config
+    grub-mkconfig -o /boot/grub/grub.cfg
