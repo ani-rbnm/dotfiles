@@ -1,0 +1,4 @@
+# Anirban - overloading chpwd so that pwd may be printed on the terminal header
+
+[[ -t 1 ]] || return
+print -Pn "\e]2;%100<...<%~\a"

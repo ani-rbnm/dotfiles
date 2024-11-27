@@ -28,6 +28,13 @@
 13. Appearance - Apply "Orchis Dark Compact" theme, "Tela Dark" icons, "IBM Plex Sans Regular"/"Firacode Nerd Font Mono Retina" font
 14. Window Manager - Title font -> IBM Plex Sans Bold
 15. Alacrity config
+    1. updated toml file
+    2. font needs to be present in ~/.local/share/fonts. Using "FiraCode Nerd Font Mono'. Download if needed.
+    3. Install powerlevel10k
+        A. lean, unicode, 8 colors, 12 hr, 2 lines, dottedd, left, black, sparse, many icons, concise, no transient prompts,
+            verbose, yes, yes. (to reconfigure: p10k configure
+        B. git clone https://github.com/alacritty/alacritty-theme.git ~/.config/alacritty/themes
+        C. paste coolnight.toml into ~/.config/alacritty/themes/themes/
 
 ## Setup grub to hide boot menu
 1. /etc/default/grub
