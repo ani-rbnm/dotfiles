@@ -57,3 +57,11 @@ source ~/.config/extra-packages/zsh-syntax-highlighting/zsh-syntax-highlighting.
 export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# pyenv setting
+eval "$(pyenv init -)"
+
+# Created by `pipx` on 2024-11-30 12:35:43
+export PATH="$PATH:/home/anirban/.local/bin"
+# Anirban - Adding pipx autocompletions
+eval "$(register-python-argcomplete pipx)"
