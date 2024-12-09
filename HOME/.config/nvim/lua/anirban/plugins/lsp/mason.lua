@@ -48,11 +48,13 @@ return {
 				"html",
 				"htmx",
 				"jdtls",
+				"julials",
 				"lua_ls",
 				"perlnavigator",
 				"prismals",
 				"puppet",
 				"pyright",
+				"r_language_server",
 				"ruby_lsp",
 				"rust_analyzer",
 				"sqls",
@@ -60,6 +62,7 @@ return {
 				"ts_ls",
 				"tailwindcss",
 			},
+			automatic_installation = false,
 		})
 		mason_tool_installer.setup({
 			ensure_installed = {

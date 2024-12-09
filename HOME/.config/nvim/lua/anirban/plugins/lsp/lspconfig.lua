@@ -10,6 +10,8 @@ return {
 		-- import lspconfig plugin
 		local lspconfig = require("lspconfig")
 
+		local util = require("lspconfig.util")
+
 		-- import mason_lspconfig plugin
 		local mason_lspconfig = require("mason-lspconfig")
 
@@ -70,6 +72,10 @@ return {
 		-- used to enable autocompletion (assign to every lsp server config)
 		local capabilities = cmp_nvim_lsp.default_capabilities()
 
+		local lsp_flags = {
+			allow_incremental_sync = true,
+			debounce_text_changes = 150,
+		}
 		-- Change the Diagnostic symbols in the sign column (gutter)
 		-- (not in youtube nvim video)
 		local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
@@ -138,6 +144,26 @@ return {
 							},
 						},
 					},
+				})
+			end,
+			["pyright"] = function()
+				lspconfig.pyright.setup({
+					capabilities = capabilities,
+					flags = lsp_flags,
+					settings = {
+						python = {
+							analysis = {
+								autoSearchPaths = true,
+								useLibraryCodeForTypes = true,
+								diagnosticMode = "workspace",
+							},
+						},
+					},
+					root_dir = function(fname)
+						return util.root_pattern(".git", "setup.py", "setup.cfg", "pyproject.toml", "requirements.txt")(
+							fname
+						) or util.path.dirname(fname)
+					end,
 				})
 			end,
 		})

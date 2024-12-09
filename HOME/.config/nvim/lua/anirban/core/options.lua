@@ -1,4 +1,15 @@
-vim.cmd("let g:netrw_liststyle = 3")
+-- vim.cmd("let g:netrw_liststyle = 3")
+vim.g.netrw_liststyle = 3
+-- This file will collate all global vars, other than those for which it makes sense to keep with other related items such as mapleader in keymaps.lua. This is however an exception
+--
+-- python path for molten plugin to run jupyter notebooks
+vim.g.python3_host_prog = vim.fn.expand("$HOME") .. "/WorkArea/PythonProjects/MoltenPluginProject/.venv/bin/python"
+
+-- prerequisite for image.nvim. needed to first install luarocks and then run the following
+-- luarocks --local --lua-version=5.1 install magick
+-- Example for configuring Neovim to load user-installed installed Lua rocks:
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?/init.lua"
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?.lua"
 
 local opt = vim.opt
 
