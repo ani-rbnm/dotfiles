@@ -84,24 +84,6 @@ return {
 				},
 			},
 			textobjects = {
-				move = {
-					enable = true,
-					set_jumps = false,
-					goto_next_start = {
-						-- jupyter notebook specific motions
-						-- put a file in the location ~/.config/nvim/after/queries/markdown/textobjects.scm with the followin
-						-- before enabling below line:
-						--;; extends
-						-- (fenced_code_block (code_fence_content) @code_cell.inner) @code_cell.outer
-						-- [[ ["]b"] = { query = "@code_cell.inner", desc = "next code block" }, ]]
-						["]b"] = { query = "@block.inner", desc = "next code block" },
-					},
-					goto_previous_start = {
-						-- jupyter notebook specific motions
-						-- ["[b"] = { query = "@code_cell.inner", desc = "previous code block" },
-						["[b"] = { query = "@block.inner", desc = "previous code block" },
-					},
-				},
 				select = {
 					enable = true,
 					-- Automatically jump forward to textobj, similar to targets.vim
@@ -118,9 +100,6 @@ return {
 						["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
 						-- You can also use captures from other query groups like `locals.scm`
 						["as"] = { query = "@local.scope", query_group = "locals", desc = "Select language scope" },
-						--Adding jupyter block specific motions
-						["ib"] = { query = "@code_cell.inner", desc = "select inner part of jupyter notebook block" },
-						["ab"] = { query = "@code_cell.outer", desc = "select outer part of jupyter notebook block" },
 					},
 					-- You can choose the select mode (default is charwise 'v'). Other possible ones 'V' (for linewise) and '<c-v>'(blockwise)
 					-- mapping query_strings to modes.

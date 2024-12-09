@@ -29,32 +29,7 @@ return {
 						enabled = true,
 					},
 				},
-				-- 		-- keymap = {
-				-- 		-- 	-- hover = "H",
-				-- 		-- 	-- definition = "gd",
-				-- 		-- 	-- rename = "<leader>rn",
-				-- 		-- 	-- references = "gr",
-				-- 		-- 	format = "<leader>gf",
-				-- 		-- },
-				-- 		-- codeRunner = {
-				-- 		-- 	enabled = true,
-				-- 		-- 	default_method = "molten",
-				-- 		-- },
 			})
-			-- 	-- quarto runner keymaps
-			-- 	-- local runner = require("quarto.runner")
-			-- 	-- vim.keymap.set("n", "<leader>cc", runner.run_cell, { silent = true, desc = "jupyter - run current cell" })
-			-- 	-- vim.keymap.set(
-			-- 	-- 	"n",
-			-- 	-- 	"<leader>cu",
-			-- 	-- 	runner.run_above,
-			-- 	-- 	{ silent = true, desc = "jupyter - run current cell and above" }
-			-- 	-- )
-			-- 	-- vim.keymap.set("n", "<leader>cA", function()
-			-- 	-- 	runner.run_all(true)
-			-- 	-- end, { silent = true, desc = "jupyter - run all cells" })
-			-- 	-- vim.keymap.set("n", "<leader>cl", runner.run_line, { silent = true, desc = "jupyter - run current line" })
-			-- 	-- vim.keymap.set("n", "<leader>cv", runner.run_range, { silent = true, desc = "jupyter - run visual range" })
 		end,
 	},
 	{ -- send code from python/r/qmd documets to a terminal or REPL
@@ -83,21 +58,12 @@ return {
       endfunction
       ]])
 
-			-- Anirban
-			-- vim.g.slime_target = "neovim"
 			vim.g.slime_target = "tmux"
-			-- Anirban - end
 			vim.g.slime_no_mappings = true
 			vim.g.slime_python_ipython = 1
 		end,
 		config = function()
-			-- Anirban
-			-- vim.g.slime_input_pid = false
-			-- vim.g.slime_suggest_default = true
-			-- vim.g.slime_menu_config = false
-			-- vim.g.slime_neovim_ignore_unlisted = true
 			vim.g.slime_default_config = { ["socket_name"] = "default", ["target_pane"] = "{last}" }
-			-- Anirban ends
 
 			local function mark_terminal()
 				local job_id = vim.b.terminal_job_id
