@@ -1,0 +1,27 @@
+# Shell
+shell/.zhistory
+shell/.zcompdump
+
+#R session artifacts
+R/.RData
+R/.Rhistory
+
+# Secrets
+.ssh/
+.gnupg/
+.pki/
+*.pem
+*.key
+*.p12
+.env
+.secrets
+
+# Caches & state
+.cache/
+.local/state/**
+
+# Don't track tool-managed data under share (plugins, mason, etx.)
+.local/share/**
+
+#tmux plugin manager (TPM) location
+.tmux/plugins/**

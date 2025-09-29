@@ -1,0 +1,2 @@
+# Use a per-user library folder; R expands %p to platform and %v to version
+R_LIBS_USER=~/R/%p-library/%v
