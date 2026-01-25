@@ -8,6 +8,7 @@ return {
 		-- Use latexmk with SyncTeX
 		vim.g.vimtex_compiler_method = "latexmk"
 		vim.g.vimtex_compiler_latexmk = {
+			continuous = 1,
 			options = {
 				"-pdf",
 				"-interaction=nonstopmode",
