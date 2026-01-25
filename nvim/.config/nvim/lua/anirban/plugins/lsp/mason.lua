@@ -62,6 +62,7 @@ return {
 				"ts_ls",
 				"tailwindcss",
 				"ltex",
+				"texlab",
 			},
 			automatic_installation = false,
 		})

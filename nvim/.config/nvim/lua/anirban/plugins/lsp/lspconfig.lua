@@ -195,11 +195,30 @@ return {
 				"--query-driver=/usr/bin/clang++*,/usr/bin/g++*",
 			},
 		})
+
+		-- mason bin config path
+		local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
+		-- setting texlab
+		vim.lsp.config("texlab", {
+			cmd = { mason_bin .. "/texlab" },
+			filetypes = { "tex", "plaintex", "bib" },
+			flags = { debounce_text_changes = 200 },
+			settings = {
+				texlab = {
+					build = {
+						executable = "latexmk",
+						args = { "-pdf", "-interaction=nonstopmode", "-synctex=1", "%f" },
+						onSave = true,
+					},
+					-- Let VimTeX handle viewing/synctex; keep forwardSearch off here (simpler)
+				},
+			},
+		})
 		-- setting ltex
 
 		-- lspconfig.ltex.setup({
 		vim.lsp.config("ltex", {
-			cmd = { vim.fn.stdpath("data") .. "/mason/bin/ltex-ls" },
+			cmd = { mason_bin .. "/ltex-ls" },
 			cmd_env = {
 				-- Space-separated JVM flags:
 				JAVA_TOOL_OPTIONS = table.concat({
@@ -218,14 +237,21 @@ return {
 				},
 			},
 		})
-		-- enabling ltex
+
 		vim.api.nvim_create_autocmd("FileType", {
-			pattern = { "markdown", "text", "tex", "plaintex", "rst" },
+			pattern = { "tex", "plaintex", "bib" },
 			callback = function(args)
+				vim.lsp.enable("texlab", { bufnr = args.buf })
 				vim.lsp.enable("ltex", { bufnr = args.buf })
 			end,
 		})
 
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = { "markdown", "text", "rst" },
+			callback = function(args)
+				vim.lsp.enable("ltex", { bufnr = args.buf })
+			end,
+		})
 		-- vim.lsp.config("clangd", {
 		-- 	cmd = {
 		-- 		"clangd",
