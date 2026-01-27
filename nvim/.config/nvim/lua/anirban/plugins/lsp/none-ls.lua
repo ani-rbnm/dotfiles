@@ -35,5 +35,4 @@ return {
 
 	-- (Optional) Markdown / LaTeX niceties
 	{ "plasticboy/vim-markdown", ft = { "markdown" } },
-	{ "lervag/vimtex", ft = { "tex", "plaintex" } },
 }

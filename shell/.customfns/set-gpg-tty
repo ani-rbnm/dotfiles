@@ -1,0 +1,8 @@
+#autoload
+set-gpg-tty() {
+  if tty -s; then
+    export GPG_TTY=$(tty)
+  else
+    unset GPG_TTY
+  fi
+}

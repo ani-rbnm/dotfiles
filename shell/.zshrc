@@ -10,6 +10,12 @@ autoload -Uz promptinit; promptinit
 # Autoloading custom functions. custom functions path added in ~/.zshenv
 autoload -U ${fpath[1]}/*(:t)
 
+# WSL only changes
+if [[ ${$(systemd-detect-virt):u} == "WSL" ]]; then
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd set-gpg-tty
+fi
+
 # Module for menu-based completion options
 zmodload -i zsh/complist
 
