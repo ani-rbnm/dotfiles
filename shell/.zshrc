@@ -73,3 +73,5 @@ export PATH="$PATH:/home/anirban/.local/bin"
 eval "$(register-python-argcomplete pipx)"
 #Anirban - Adding the default pipx version which points to 3.13 in pyenv
 export PIPX_DEFAULT_PYTHON=~/.pyenv/versions/3.13.0/bin/python3.13
+# Anirban - direnv setting. Added to set project specific environmental variables
+eval "$(direnv hook zsh)"
