@@ -10,10 +10,33 @@ vim.b.slime_cell_delimiter = "```"
 -- Keep this initialized; slime override checks it
 vim.b.quarto_is_python_chunk = vim.b.quarto_is_python_chunk or false
 
--- Insert chunk helpers (quarto-nvim doesn't expose these)
+---------------------------------------------------------------------
+-- Chunk helpers (quarto-nvim doesn't expose these)
+---------------------------------------------------------------------
 local function is_code_chunk()
 	local current = require("otter.keeper").get_current_language_context()
 	return current ~= nil
+end
+
+local function current_chunk_lang()
+	local ctx = require("otter.keeper").get_current_language_context()
+	-- Depending on otter version, ctx might be a string or a table.
+	if ctx == nil then
+		return nil
+	end
+	if type(ctx) == "string" then
+		return ctx
+	end
+	if type(ctx) == "table" then
+		return ctx.language or ctx.lang or ctx.filetype
+	end
+	return nil
+end
+
+local function in_r_chunk()
+	local lang = current_chunk_lang()
+	-- otter sometimes returns "r" or "R"
+	return lang ~= nil and lang:lower() == "r"
 end
 
 local function insert_code_chunk(lang)
@@ -40,13 +63,17 @@ local function insert_rust_chunk()
 	insert_code_chunk("rust")
 end
 
+---------------------------------------------------------------------
 -- tmux helpers (unchanged)
+---------------------------------------------------------------------
 local function new_terminal(cmd)
 	vim.cmd("silent !tmux splitw -h " .. cmd .. " &")
 end
+
 local function new_terminal_python()
 	new_terminal("python")
 end
+
 local function new_terminal_r()
 	new_terminal("R --no-save")
 end
@@ -55,21 +82,21 @@ end
 local function new_terminal_ipython()
 	local cwd = vim.fn.getcwd()
 
-	-- 1) Preferred: per-project venv (you said you'll always have this)
+	-- 1) Preferred: per-project venv
 	local venv_ipy = cwd .. "/.venv/bin/ipython"
 	if vim.fn.executable(venv_ipy) == 1 then
 		new_terminal(venv_ipy .. " -i --no-confirm-exit")
 		return
 	end
 
-	-- 2) Poetry-aware fallback: only if this looks like a Poetry project AND Poetry exists
+	-- 2) Poetry-aware fallback
 	local has_pyproject = (vim.fn.filereadable(cwd .. "/pyproject.toml") == 1)
 	if has_pyproject and (vim.fn.executable("poetry") == 1) then
 		new_terminal("poetry run ipython -i --no-confirm-exit")
 		return
 	end
 
-	-- 3) Last resort: whatever ipython is on PATH (pipx/system)
+	-- 3) Last resort: ipython on PATH
 	if vim.fn.executable("ipython") == 1 then
 		new_terminal("ipython -i --no-confirm-exit")
 		return
@@ -81,7 +108,63 @@ local function new_terminal_ipython()
 	)
 end
 
+---------------------------------------------------------------------
+-- NEW: slime one-liner sender + R introspection (R chunks only)
+---------------------------------------------------------------------
+-- Send a single command via slime (uses SlimeLineSend, restores after a tiny delay)
+local function slime_send_line(text)
+	local bufnr = vim.api.nvim_get_current_buf()
+	local row = vim.api.nvim_win_get_cursor(0)[1]
+	local orig = vim.api.nvim_buf_get_lines(bufnr, row - 1, row, false)[1] or ""
+
+	-- Put the command on the current line
+	vim.api.nvim_buf_set_lines(bufnr, row - 1, row, false, { text })
+
+	-- Send via slime
+	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Plug>SlimeLineSend", true, true, true), "n", false)
+
+	-- Restore original line after slime has read it
+	vim.defer_fn(function()
+		if vim.api.nvim_buf_is_valid(bufnr) then
+			vim.api.nvim_buf_set_lines(bufnr, row - 1, row, false, { orig })
+		end
+	end, 50) -- bump to 100 if your tmux/slime is slower
+end
+
+-- Robust R object under cursor: df, (df), df$a, (df)$a, df[[1]], df@slot, etc.
+local function cword()
+	local w = vim.fn.expand("<cWORD>")
+
+	-- strip surrounding parentheses repeatedly: ((df)) -> df
+	while w:match("^%b()$") do
+		w = w:sub(2, -2)
+	end
+
+	-- strip common R accessors
+	w = w
+		:gsub("%$.*$", "") -- df$col
+		:gsub("@.*$", "") -- df@slot
+		:gsub("%[%[.*$", "") -- df[[1]]
+		:gsub("%[.*$", "") -- df[1]
+
+	-- defensive trim
+	w = w:gsub("^%s+", ""):gsub("%s+$", "")
+	return w
+end
+
+local function r_only(fn)
+	return function(...)
+		if not in_r_chunk() then
+			vim.notify("Not in an R chunk", vim.log.levels.INFO)
+			return
+		end
+		return fn(...)
+	end
+end
+
+---------------------------------------------------------------------
 -- Buffer-local maps so plugin updates won't stomp them
+---------------------------------------------------------------------
 local mapopts = { buffer = true, silent = true }
 
 -- Preview
@@ -178,3 +261,95 @@ vim.keymap.set(
 	vim.tbl_extend("force", mapopts, { desc = "quarto - run below" })
 )
 vim.keymap.set("n", "<localleader>rA", runner.run_all, vim.tbl_extend("force", mapopts, { desc = "quarto - run all" }))
+
+---------------------------------------------------------------------
+-- NEW: R introspection maps (only active inside R chunks)
+-- These intentionally do NOT override your runner maps.
+---------------------------------------------------------------------
+vim.keymap.set(
+	"n",
+	"<localleader>cn",
+	r_only(function()
+		slime_send_line(("names(%s)"):format(cword()))
+	end),
+	vim.tbl_extend("force", mapopts, { desc = "R chunk: names(<cword>)" })
+)
+
+vim.keymap.set(
+	"n",
+	"<localleader>cs",
+	r_only(function()
+		slime_send_line(("str(%s, max.level = 1)"):format(cword()))
+	end),
+	vim.tbl_extend("force", mapopts, { desc = "R chunk: str(<cword>) shallow" })
+)
+
+vim.keymap.set(
+	"n",
+	"<localleader>ca",
+	r_only(function()
+		slime_send_line(("args(%s)"):format(cword()))
+	end),
+	vim.tbl_extend("force", mapopts, { desc = "R chunk: args(<cword>)" })
+)
+
+vim.keymap.set(
+	"n",
+	"<localleader>cm",
+	r_only(function()
+		local w = cword()
+		slime_send_line(("methods(class = class(%s)[1])"):format(w))
+	end),
+	vim.tbl_extend("force", mapopts, { desc = "R chunk: methods(class(<cword>)[1])" })
+)
+
+vim.keymap.set(
+	"n",
+	"<localleader>cS",
+	r_only(function()
+		local w = cword()
+		slime_send_line(("if (isS4(%s)) slotNames(%s) else 'not S4'"):format(w, w))
+	end),
+	vim.tbl_extend("force", mapopts, { desc = "R chunk: slotNames(<cword>) if S4" })
+)
+
+---------------------------------------------------------------------
+-- NEW (optional): better cmp behavior in Quarto while in R chunks
+-- We apply a buffer-local source tweak, but only when cursor is in an R chunk.
+-- This avoids making Quarto completion too noisy for prose / other languages.
+---------------------------------------------------------------------
+do
+	local ok, cmp = pcall(require, "cmp")
+	if ok then
+		local aug = vim.api.nvim_create_augroup("QuartoCmpRChunk", { clear = true })
+
+		vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "InsertEnter" }, {
+			group = aug,
+			buffer = 0,
+			callback = function()
+				if in_r_chunk() then
+					cmp.setup.buffer({
+						sources = cmp.config.sources({
+							{ name = "nvim_lsp" },
+							{ name = "luasnip" },
+							{ name = "buffer", keyword_length = 2 },
+							{ name = "path" },
+							{ name = "spell" },
+						}),
+					})
+				else
+					-- Revert to a less noisy default for prose/other chunks.
+					cmp.setup.buffer({
+						sources = cmp.config.sources({
+							{ name = "nvim_lsp" },
+							{ name = "luasnip" },
+							{ name = "buffer", keyword_length = 5 }, -- your global default
+							{ name = "path" },
+							{ name = "spell" },
+						}),
+					})
+				end
+			end,
+		})
+	end
+end

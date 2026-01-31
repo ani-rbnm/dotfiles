@@ -252,6 +252,21 @@ return {
 				vim.lsp.enable("ltex", { bufnr = args.buf })
 			end,
 		})
+
+		vim.lsp.config("r_language_server", {
+			cmd = { "R", "--vanilla", "--slave", "-e", "languageserver::run()" },
+			filetypes = { "r", "rmd", "quarto" },
+			root_markers = { ".git", ".Rproj", "DESCRIPTION" },
+
+			settings = {
+				r = {
+					lsp = {
+						diagnostics = true,
+						rich_documentation = true,
+					},
+				},
+			},
+		})
 		-- vim.lsp.config("clangd", {
 		-- 	cmd = {
 		-- 		"clangd",
