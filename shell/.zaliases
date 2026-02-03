@@ -1,3 +1,4 @@
 alias ll='ls -lht'
 alias lla='ls -laht'
 alias NUL='> /dev/null 2>&1'
+alias pr='poetry run'
