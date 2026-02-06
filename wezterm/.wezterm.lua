@@ -4,7 +4,12 @@ local wezterm = require("wezterm")
 -- Object to hold the config
 local config = wezterm.config_builder()
 
-config.font = wezterm.font("Firacode Nerd Font Mono")
+-- config.font = wezterm.font("Firacode Nerd Font Mono")
+config.font = wezterm.font_with_fallback({
+	{ family = "Firacode Nerd Font Mono" },
+	{ family = "Symbols Nerd Font Mono" },
+})
+
 config.font_size = 11
 
 config.enable_tab_bar = false
