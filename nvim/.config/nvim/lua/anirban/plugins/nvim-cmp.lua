@@ -26,6 +26,11 @@ return {
 		-- loads vscode style snippets from installed plugins (e.g. friendly-snippets)
 		require("luasnip.loaders.from_vscode").lazy_load()
 
+		-- loads lua snippets from the lua directory
+		require("luasnip.loaders.from_lua").lazy_load({
+			paths = { vim.fn.stdpath("config") .. "/lua/anirban/snippets" },
+		})
+
 		cmp.setup({
 			completion = {
 				completeopt = "menu,menuone,preview,noselect",
@@ -43,6 +48,23 @@ return {
 				["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
 				["<C-e>"] = cmp.mapping.abort(), -- close completion window
 				["<CR>"] = cmp.mapping.confirm({ select = false }),
+
+				-- Jump forward in snippet
+				["<C-l>"] = cmp.mapping(function(fallback)
+					if require("luasnip").expand_or_jumpable() then
+						require("luasnip").expand_or_jump()
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
+				-- Jump backward in snippet
+				["<C-h>"] = cmp.mapping(function(fallback)
+					if require("luasnip").jumpable(-1) then
+						require("luasnip").jump(-1)
+					else
+						fallback()
+					end
+				end, { "i", "s" }),
 			}),
 			-- sources for autocompletion
 			sources = cmp.config.sources({

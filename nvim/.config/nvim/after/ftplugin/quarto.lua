@@ -353,3 +353,17 @@ do
 		})
 	end
 end
+
+-- Only override indent if this is a Python QMD
+
+local bufnr = vim.api.nvim_get_current_buf()
+local lines = vim.api.nvim_buf_get_lines(bufnr, 0, 80, false)
+local text = table.concat(lines, "\n")
+
+-- Detect Python kernel in YAML
+if text:match("\njupyter:%s*['\"]?python3['\"]?%s*\n") or text:match("^jupyter:%s*['\"]?python3['\"]?%s*$") then
+	vim.opt_local.tabstop = 4
+	vim.opt_local.softtabstop = 4
+	vim.opt_local.shiftwidth = 4
+	vim.opt_local.expandtab = true
+end
