@@ -48,21 +48,6 @@ opt.smartcase = true -- case-sensitive search if text includes mixed case
 opt.cursorline = true -- highlight cursor line
 opt.scrolloff = 999 -- keeps the cursor locked at the center of the screen
 
--- Autocommand group for project type specific indentation
--- vim.api.nvim_create_augroup("indent_settings", { clear = true })
--- Python indentation autocommand
--- TODO: Can this be managed better with a plugin? Investigate.
--- vim.api.nvim_create_autocmd("FileType", {
--- 	desc = "Format python files",
--- 	pattern = "python",
--- 	group = "indent_settings",
--- 	callback = function(opts)
--- 		vim.bo[opts.buf].tabstop = 4
--- 		vim.bo[opts.buf].softtabstop = 4
--- 		vim.bo[opts.buf].shiftwidth = 4
--- 	end,
--- })
---
 -- Turning spell on
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "markdown", "gitcommit", "text" },
@@ -71,3 +56,5 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.spelllang = "en_gb"
 	end,
 })
+
+opt.statusline:append("%{&paste?'[PASTE]':''}")

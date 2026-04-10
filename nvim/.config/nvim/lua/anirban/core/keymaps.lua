@@ -28,3 +28,8 @@ keymap.set("n", "<leader>qf", "<cmd>cfirst<CR>", { silent = true, desc = "jump t
 keymap.set("n", "<leader>ql", "<cmd>clast<CR>", { silent = true, desc = "jump to last qflist item" })
 keymap.set("n", "<leader>qo", "<cmd>copen<CR>", { silent = true, desc = "open qflist window" })
 keymap.set("n", "<leader>qx", "<cmd>cclose<CR>", { silent = true, desc = "close qflist window" })
+
+keymap.set("n", "<F2>", function()
+	vim.o.paste = not vim.o.paste
+	print("paste=" .. (vim.o.paste and "ON" or "OFF"))
+end)
