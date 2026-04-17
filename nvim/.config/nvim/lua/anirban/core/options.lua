@@ -57,4 +57,11 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+-- prints status if paste is on
 opt.statusline:append("%{&paste?'[PASTE]':''}")
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	callback = function()
+		vim.cmd([[%s/\r$//e]])
+	end,
+})
