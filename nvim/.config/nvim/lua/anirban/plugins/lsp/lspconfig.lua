@@ -254,7 +254,7 @@ return {
 		})
 
 		vim.lsp.config("r_language_server", {
-			cmd = { "R", "--vanilla", "--slave", "-e", "languageserver::run()" },
+			cmd = { "R", "--no-save", "--no-restore", "--no-init-file", "--slave", "-e", "languageserver::run()" },
 			filetypes = { "r", "rmd", "quarto" },
 			root_markers = { ".git", ".Rproj", "DESCRIPTION" },
 
