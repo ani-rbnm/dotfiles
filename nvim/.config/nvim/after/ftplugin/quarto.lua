@@ -13,25 +13,51 @@ vim.b.quarto_is_python_chunk = vim.b.quarto_is_python_chunk or false
 ---------------------------------------------------------------------
 -- Chunk helpers (quarto-nvim doesn't expose these)
 ---------------------------------------------------------------------
-local function is_code_chunk()
-	local current = require("otter.keeper").get_current_language_context()
-	return current ~= nil
-end
 
 local function current_chunk_lang()
-	local ctx = require("otter.keeper").get_current_language_context()
-	-- Depending on otter version, ctx might be a string or a table.
-	if ctx == nil then
+	local ok, ctx = pcall(function()
+		return require("otter.keeper").get_current_language_context()
+	end)
+
+	if not ok or ctx == nil then
 		return nil
 	end
+
+	-- Depending on otter version, ctx might be a string or a table.
 	if type(ctx) == "string" then
 		return ctx
 	end
+
 	if type(ctx) == "table" then
 		return ctx.language or ctx.lang or ctx.filetype
 	end
+
 	return nil
 end
+
+local function is_code_chunk()
+	return current_chunk_lang() ~= nil
+end
+
+-- local function is_code_chunk()
+-- 	local current = require("otter.keeper").get_current_language_context()
+-- 	return current ~= nil
+-- end
+--
+-- local function current_chunk_lang()
+-- 	local ctx = require("otter.keeper").get_current_language_context()
+-- 	-- Depending on otter version, ctx might be a string or a table.
+-- 	if ctx == nil then
+-- 		return nil
+-- 	end
+-- 	if type(ctx) == "string" then
+-- 		return ctx
+-- 	end
+-- 	if type(ctx) == "table" then
+-- 		return ctx.language or ctx.lang or ctx.filetype
+-- 	end
+-- 	return nil
+-- end
 
 local function in_r_chunk()
 	local lang = current_chunk_lang()
