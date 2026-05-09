@@ -48,8 +48,15 @@ return {
 			-- Called from Vimscript before escaping/sending
 			-- Must WRITE to a buffer-local var because the vimscript checks b:quarto_is_python_chunk
 			Quarto_is_in_python_chunk = function()
-				vim.b.quarto_is_python_chunk = require("otter.tools.functions").is_otter_language_context("python")
+				local ok, result = pcall(function()
+					return require("otter.tools.functions").is_otter_language_context("python")
+				end)
+
+				vim.b.quarto_is_python_chunk = ok and result or false
 			end
+			-- Quarto_is_in_python_chunk = function()
+			-- 	vim.b.quarto_is_python_chunk = require("otter.tools.functions").is_otter_language_context("python")
+			-- end
 
 			vim.cmd([[
       let g:slime_dispatch_ipython_pause = 100
